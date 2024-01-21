@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>東方靈數（好命密碼）計算器</title>
+</head>
+
+<body>
+    <h1>東方靈數（好命密碼）計算器</h1>
+    <p>計算所輸入數字的東方靈數</p>
+    <p>若遇到英文，會依照A=01, B=02, ... 的規則轉換</p>
+    <p>非英文或數字的符號會被跳過</p>
+    <p>例如車牌 AKB-48 </p>
+    <p>測試中，尚未支援 05 的處理 </p>
+    <label for="numberInput">請輸入數字：</label>
+    <input type="text" id="numberInput" oninput="skipNonHalfWidthNumbers()">
+    <button onclick="calculate()">計算</button>
+    <p id="result"></p>
+
+    <script>
+        function convertToAlphabeticalOrder(letter) {
+            var lowercaseLetter = letter.toLowerCase();
+            var alphabeticalOrder = lowercaseLetter.charCodeAt(0) - 96;
+            if (alphabeticalOrder > 26 || alphabeticalOrder < 1) {
+                return null;
+            }
+            return alphabeticalOrder.toString().padStart(2, '0');
+        }
+
+        function skipNonHalfWidthNumbers(value) {
+            var newValue = "";
+            for (var i = 0; i < value.length; i++) {
+                var code = value.charCodeAt(i);
+                if (code >= 48 && code <= 57) {
+                    newValue += value.charAt(i);
+                } else {
+                    var tmp = convertToAlphabeticalOrder(value.charAt(i))
+                    if (tmp != null) {
+                        newValue += tmp;
+                    }
+                }
+            }
+            return newValue
+        }
+
+        function calculate() {
+            var number = skipNonHalfWidthNumbers(document.getElementById("numberInput").value);
+            var result = "";
+            var numbersLine = "";
+            var namesLine = "";
+            var inputNumber = "您輸入的數字為：" + number;
+
+            var namesCount = {};
+            var totalNames = 0;
+
+            for (var i = 0; i < number.length - 1; i++) {
+                var pair = number.slice(i, i + 2);
+                numbersLine += "<u>" + toFullWidth(pair) + "</u> ";
+                var n = getNumberName(pair)
+                namesLine += n + " ";
+
+                if (n == "ＸＸ") {
+                    continue;
+                }
+
+                // Count the occurrence of each name
+                if (namesCount[n]) {
+                    namesCount[n]++;
+                } else {
+                    namesCount[n] = 1;
+                }
+                totalNames++;
+            }
+
+            // Calculate the percentage of each name
+            var namesPercentage = {};
+            for (var name in namesCount) {
+                namesPercentage[name] = ((namesCount[name] / totalNames) * 100).toFixed(2) + "%";
+            }
+
+            document.getElementById("result").innerHTML = inputNumber + '<br>' + numbersLine + "<br>" + namesLine;
+            document.getElementById("result").innerHTML += '<br>';
+
+            // Display the count and percentage of each name
+            for (var name in namesCount) {
+                document.getElementById("result").innerHTML += "<br>" + name + ": " + namesCount[name] + " (" + namesPercentage[name] + ")";
+            }
+        }
+
+        document.getElementById("numberInput").addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                calculate();
+            }
+        });
+
+        function toFullWidth(str) {
+            var fullWidth = "";
+            for (var i = 0; i < str.length; i++) {
+                var code = str.charCodeAt(i);
+                if (code >= 48 && code <= 57) {
+                    fullWidth += String.fromCharCode(code + 65248);
+                } else {
+                    fullWidth += str.charAt(i);
+                }
+            }
+            return fullWidth;
+        }
+
+        function getNumberName(pair) {
+            switch (pair) {
+                case "17":
+                case "71":
+                case "89":
+                case "98":
+                case "46":
+                case "64":
+                case "23":
+                case "32":
+                    return "禍害";
+                case "16":
+                case "61":
+                case "47":
+                case "74":
+                case "38":
+                case "83":
+                case "92":
+                case "29":
+                    return "六煞";
+                case "18":
+                case "81":
+                case "79":
+                case "97":
+                case "42":
+                case "24":
+                case "36":
+                case "63":
+                    return "五鬼";
+                case "12":
+                case "21":
+                case "96":
+                case "69":
+                case "84":
+                case "48":
+                case "73":
+                case "37":
+                    return "絕命";
+                case "00":
+                case "11":
+                case "22":
+                case "33":
+                case "44":
+                case "55":
+                case "66":
+                case "77":
+                case "88":
+                case "99":
+                    return "伏位";
+                case "19":
+                case "91":
+                case "87":
+                case "78":
+                case "34":
+                case "43":
+                case "26":
+                case "62":
+                    return "延年";
+                case "13":
+                case "31":
+                case "68":
+                case "86":
+                case "49":
+                case "94":
+                case "72":
+                case "27":
+                    return "天醫";
+                case "14":
+                case "41":
+                case "76":
+                case "67":
+                case "93":
+                case "39":
+                case "82":
+                case "28":
+                    return "生氣";
+                default:
+                    return "ＸＸ";
+            }
+        }
+    </script>
+</body>
+
+</html>
