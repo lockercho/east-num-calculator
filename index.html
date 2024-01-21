@@ -7,16 +7,25 @@
 
 <body>
     <h1>東方靈數（好命密碼）計算器</h1>
-    <p>計算所輸入數字的東方靈數</p>
-    <p>若遇到英文，會依照A=01, B=02, ... 的規則轉換</p>
-    <p>非英文或數字的符號會被跳過</p>
-    <p>例如車牌 AKB-48 </p>
-    <p>測試中，尚未支援 05 的處理 </p>
-    <label for="numberInput">請輸入數字：</label>
+    <p>計算所輸入數字的東方靈數（生氣、天醫、延年、伏位、絕命、五鬼、六煞、禍害）</p>
+    <p>
+        若遇到英文，會依照A=01, B=02, ... 的規則轉換
+        <br />非英文或數字的符號會被跳過
+        例如車牌 AKB-48 就會變成 01110248
+    </p>
+    <p>測試中，尚未支援 05 的處理，大家自己手轉囉，規則如下:</p>
+    <img height="100" src="05_ref.jpg" />
+    <br />
+    那就開始玩
+    <h3 for="numberInput">請輸入數字：</h3>
     <input type="text" id="numberInput" oninput="skipNonHalfWidthNumbers()">
     <button onclick="calculate()">計算</button>
     <p id="result"></p>
+    <hr />
 
+    <p>參考資料: </p>
+    <p><a href="https://www.instagram.com/p/C2RWknTP7ce/"> 神仙補習班 ig </a></p>
+    <p><a href="https://www.youtube.com/watch?v=7__exuY_6Bg"> 神仙補習班 - 東方靈數 </a></p>
     <script>
         function convertToAlphabeticalOrder(letter) {
             var lowercaseLetter = letter.toLowerCase();
