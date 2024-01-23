@@ -11,29 +11,71 @@
     button {
         font-size: 20px;
     }
+
+    table,
+    th,
+    td {
+        border: 1px solid black;
+
+    }
+
+    th,
+    td {
+        padding: 2px 20px;
+    }
 </style>
 
 <body>
     <h1>東方靈數（好命密碼）計算器</h1>
     <p>計算所輸入數字的東方靈數<br>（生氣、天醫、延年、伏位、絕命、五鬼、六煞、禍害）</p>
+    <p>數字意義解說請看：<a target="_blank"
+            href="https://docs.google.com/spreadsheets/u/0/d/18McHGqDtBXo3KZub1rwe8vI3SGXFI7lctMWY9U6yl4c/htmlview">
+            東方靈數 分享版 </a></p>
+
+
+    <h2>分析1：人格類型+流年</h2>
+    <h3 for="numberInput">請輸入身分證字號：</h3>
+
+    <input type="text" id="numberInput" oninput="skipNonHalfWidthNumbers()" style="font-size: 20px;">
+    <button onclick="calculateID()">計算</button>
+    <p id="recap-input"></p>
+    <p id="result-overall-type"></p>
+    <p id="result-yearly-fortune"></p>
+    <hr />
+    <h2>分析2：任何其他數字（手機、車牌、住址等）</h2>
     <p>
         若遇到英文，會依照A=01, B=02, ... 的規則轉換
         <br />非英文或數字的符號會被跳過
-        例如車牌 AKB-48 就會變成 01110248
     </p>
-    <p>測試中，尚未支援 05 的處理，大家自己手轉囉，規則如下:</p>
-    <img height="130" src="05_ref.jpg" />
-    <br />
-    那就開始玩
-    <h3 for="numberInput">請輸入數字：</h3>
-    <input type="text" id="numberInput" oninput="skipNonHalfWidthNumbers()" style="font-size: 20px;">
-    <button onclick="calculate()">計算</button>
-    <p id="result"></p>
+    <h3 for="numberInputAny">請輸入一串英數字：</h3>
+    <label>地址也可，但數字請使用半型阿拉伯數字，例如 100台北市中正區重慶南路1段122號</label>
+    <p id="recap-input-2"></p>
+    <input type="text" id="numberInputAny" oninput="skipNonHalfWidthNumbers()" style="font-size: 20px;">
+    <button onclick="calculateAny()">計算</button>
+    <p id="result-any"></p>
+    <p id="result-any-stats"></p>
     <hr />
+    <p>
+        參考資料:
+    <ul>
+        <li><a target="_blank"
+                href="https://docs.google.com/spreadsheets/u/0/d/18McHGqDtBXo3KZub1rwe8vI3SGXFI7lctMWY9U6yl4c/htmlview">
+                東方靈數解釋 分享版 （ \感謝社群/ ） </a></li>
+        <li><a target="_blank" href="https://www.chinyuan.com.tw/all_book/more?id=4878"> 好命密碼 - 數字磁場的魅力 </a></li>
+        <li><a target="_blank" href="https://www.youtube.com/watch?v=7__exuY_6Bg"> 神仙補習班 - 東方靈數 </a></li>
+        <li> <a target="_blank" href="https://www.instagram.com/p/C2RWknTP7ce/"> 神仙補習班 ig </a></li>
+    </ul>
+    </p>
+    <hr />
+    <p>
+        作者 murmur 區:
+    <ul>
+        <li>網站不會搜集資料，請安心餵各種數字。</li>
+        <li>0 跟 5 的處理方式是參考好命密碼的書，可能跟 podcast 說得有點不一樣，但程式比較好寫，ㄎ。</li>
+        <li>參考資料區如果任何原因不想被放上來，請寄信給我，我會立刻撤下：<a href="mailto:sepag27368@wentcity.com">sepag27368@wentcity.com</a></li>
+    </ul>
 
-    <p>參考資料: </p>
-    <p><a href="https://www.instagram.com/p/C2RWknTP7ce/"> 神仙補習班 ig </a></p>
-    <p><a href="https://www.youtube.com/watch?v=7__exuY_6Bg"> 神仙補習班 - 東方靈數 </a></p>
+    </p>
     <script>
         function convertToAlphabeticalOrder(letter) {
             var lowercaseLetter = letter.toLowerCase();
@@ -60,21 +102,125 @@
             return newValue
         }
 
-        function calculate() {
-            var number = skipNonHalfWidthNumbers(document.getElementById("numberInput").value);
-            var result = "";
+
+        function parse05(value) {
+            var v = value.split("");
+            var newValue = "";
+            for (var i = 0; i < v.length; i++) {
+                if (v[i] == '5' && i > 0 && i < v.length - 1) {
+                    // skip middle 5
+                    continue
+                }
+                newValue += v[i];
+            }
+            return newValue;
+        }
+        function parsePair(value) {
+            if (value == '00') {
+                return value
+            }
+
+            var v = value.split("");
+            if (v[0] == '5' || v[1] == '5') {
+                return '55'; // 伏位
+            }
+            if (v[0] == '0' || v[1] == '0') {
+                return '55'; // 伏位
+            }
+            return value
+        }
+
+        function showResult() {
+            // Collect results
+            // result 1: your overall type
+            // result 2: your year fortune
+        }
+
+        function getIDInput() {
+            return skipNonHalfWidthNumbers(document.getElementById("numberInput").value);
+        }
+        function getAnyInput() {
+            return skipNonHalfWidthNumbers(document.getElementById("numberInputAny").value);
+        }
+
+        function calculateID() {
+            var number = getIDInput()
+            var inputNumber = "您輸入的數字為：<u>" + number + "</u>";
+
+            var namesCount = {};
+
+            // show overall type
+            var overallNum = number
+            if (number.slice(0, 1) == '0') {
+                overallNum = number.slice(1)
+            }
+            console.log(overallNum)
+
+            var resDom = document.getElementById("recap-input")
+            resDom.innerHTML = ''
+            resDom.innerHTML += inputNumber
+
+            var resDom = document.getElementById("result-overall-type")
+            var { numbersLine, namesLine, namesCount, totalNames, table } = calPairs(number);
+            resDom.innerHTML = ''
+            var { result, stats } = calOverallType(namesCount, totalNames)
+            resDom.innerHTML += result + stats + "<br>"
+
+            // show yearly fortune
+            var resDom = document.getElementById("result-yearly-fortune")
+            var { numbersLine, namesLine, namesCount, totalNames } = calPairs(number);
+            resDom.innerHTML = ''
+            resDom.innerHTML += table;
+        }
+        function calculateAny() {
+            var number = getAnyInput()
+            var inputNumber = "您輸入的數字為：<u>" + number + "</u>";
+
+            var namesCount = {};
+
+            // show overall type
+            var overallNum = number
+            if (number.slice(0, 1) == '0') {
+                overallNum = number.slice(1)
+            }
+            console.log(overallNum)
+
+            var resDom = document.getElementById("recap-input-2")
+            resDom.innerHTML = ''
+            resDom.innerHTML += inputNumber
+
+            var resDom = document.getElementById("result-any")
+            var { numbersLine, namesLine, namesCount, totalNames, table } = calPairs(number);
+            resDom.innerHTML = numbersLine + '<br>' + namesLine + "<br>"
+
+            var resDom = document.getElementById("result-any-stats")
+            var { result, stats } = calOverallType(namesCount, totalNames)
+            resDom.innerHTML = stats
+
+            // show yearly fortune
+            // var resDom = document.getElementById("result-yearly-fortune")
+            // var { numbersLine, namesLine, namesCount, totalNames } = calPairs(number);
+            // resDom.innerHTML = ''
+            // resDom.innerHTML += table;
+        }
+
+        function calPairs(number) {
             var numbersLine = "";
             var namesLine = "";
-            var inputNumber = "您輸入的數字為：" + number;
 
             var namesCount = {};
             var totalNames = 0;
 
+            var table = "<table><thead><tr><th>階段</th><th>數字</th></tr></thead><tbody>";
+
             for (var i = 0; i < number.length - 1; i++) {
                 var pair = number.slice(i, i + 2);
                 numbersLine += "<u>" + toFullWidth(pair) + "</u> ";
+                pair = parsePair(pair);
                 var n = getNumberName(pair)
                 namesLine += n + " ";
+
+                table += "<tr><td>" + getStage(i) + "</td><td>" + n + "</td></tr>"
 
                 if (n == "ＸＸ") {
                     continue;
@@ -88,20 +234,48 @@
                 }
                 totalNames++;
             }
-
-            // Calculate the percentage of each name
-            var namesPercentage = {};
-            for (var name in namesCount) {
-                namesPercentage[name] = ((namesCount[name] / totalNames) * 100).toFixed(2) + "%";
+            table += "</tbody></table>";
+            return {
+                numbersLine: numbersLine,
+                namesLine: namesLine,
+                namesCount: namesCount,
+                totalNames: totalNames,
+                table: table
             }
+        }
+        function getStage(i) {
+            var arr = [
+                "0~10歲",
+                "11~15歲",
+                "16~20歲",
+                "21~25歲",
+                "26~30歲",
+                "31~35歲",
+                "36~40歲",
+                "41~45歲",
+                "46~50歲",
+                "51~70歲"
+            ]
+            if (i >= arr.length)
+                return "ERROR"
+            return arr[i]
+        }
 
-            document.getElementById("result").innerHTML = inputNumber + '<br>' + numbersLine + "<br>" + namesLine;
-            document.getElementById("result").innerHTML += '<br>';
-
-            // Display the count and percentage of each name
-            for (var name in namesCount) {
-                document.getElementById("result").innerHTML += "<br>" + name + ": " + namesCount[name] + " (" + namesPercentage[name] + ")";
-            }
+        function calOverallType(namesCount, totalNames) {
+            // Create items array
+            var sortedNames = Object.keys(namesCount).map(function (key) {
+                // key, count, percentage
+                return [key, namesCount[key], namesCount[key] / totalNames];
+            });
+            // Sort the array based on the second element
+            sortedNames = sortedNames.sort(function (first, second) {
+                return second[1] - first[1];
+            });
+            var result = "您為「<strong>" + sortedNames[0][0] + "</strong>」型的人<br>";
+            var stats = sortedNames.map(function (v) {
+                return v[0] + ": " + v[1] + " (" + (v[2] * 100).toFixed(1) + "%)";
+            }).join(", ")
+            return { result, stats }
         }
 
         document.getElementById("numberInput").addEventListener("keyup", function (event) {
@@ -162,7 +336,6 @@
                 case "73":
                 case "37":
                     return "絕命";
-                case "00":
                 case "11":
                 case "22":
                 case "33":
