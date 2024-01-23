@@ -29,14 +29,15 @@
     <h1>東方靈數（好命密碼）計算器</h1>
     <p>計算所輸入數字的東方靈數<br>（生氣、天醫、延年、伏位、絕命、五鬼、六煞、禍害）</p>
     <p>數字意義解說請看：<a target="_blank"
-            href="https://docs.google.com/spreadsheets/u/0/d/18McHGqDtBXo3KZub1rwe8vI3SGXFI7lctMWY9U6yl4c/htmlview">
-            東方靈數 分享版 </a></p>
+            href="https://docs.google.com/spreadsheets/u/0/d/18McHGqDtBXo3KZub1rwe8vI3SGXFI7lctMWY9U6yl4c/htmlview">東方靈數
+            分享版 </a></p>
 
 
     <h2>分析1：人格類型+流年</h2>
     <h3 for="numberInput">請輸入身分證字號：</h3>
 
-    <input type="text" id="numberInput" oninput="skipNonHalfWidthNumbers()" style="font-size: 20px;">
+    <input type="text" id="numberInput" oninput="skipNonHalfWidthNumbers()"
+        onkeydown="if(event.keyCode == 13){calculateID()}" style="font-size: 20px;">
     <button onclick="calculateID()">計算</button>
     <p id="recap-input"></p>
     <p id="result-overall-type"></p>
@@ -50,7 +51,8 @@
     <h3 for="numberInputAny">請輸入一串英數字：</h3>
     <label>地址也可，但數字請使用半型阿拉伯數字，例如 100台北市中正區重慶南路1段122號</label>
     <p id="recap-input-2"></p>
-    <input type="text" id="numberInputAny" oninput="skipNonHalfWidthNumbers()" style="font-size: 20px;">
+    <input type="text" id="numberInputAny" oninput="skipNonHalfWidthNumbers()"
+        onkeydown="if(event.keyCode == 13){calculateAny()}" style="font-size: 20px;">
     <button onclick="calculateAny()">計算</button>
     <p id="result-any"></p>
     <p id="result-any-stats"></p>
