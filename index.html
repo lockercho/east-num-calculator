@@ -41,13 +41,14 @@
             href="https://docs.google.com/spreadsheets/u/0/d/18McHGqDtBXo3KZub1rwe8vI3SGXFI7lctMWY9U6yl4c/htmlview">東方靈數
             分享版 </a></p>
 
-
     <h2>分析1：人格類型+流年</h2>
     <h3 for="numberInput">請輸入身分證字號：</h3>
-
-    <input type="text" id="numberInput" oninput="skipNonHalfWidthNumbers()"
-        onkeydown="if(event.keyCode == 13){calculateID()}" style="font-size: 20px;">
+    <input type="text" id="numberInput" onkeydown="if(event.keyCode == 13){calculateID()}" style="font-size: 20px;">
+    <br>
+    <input type="radio" id="no-trans" name="transform" value="no" /> 我自己處理 0 跟 5 [給有聽 podcast 的人 XD] <br>
+    <input type="radio" id="trans" name="transform" value="yes" checked /> 幫我轉換 0 跟 5 [簡易轉法, 請見最下方說明]<br>
     <button onclick="calculateID()">計算</button>
+
     <p id="recap-input"></p>
     <p id="result-overall-type"></p>
     <p id="result-yearly-fortune"></p>
@@ -59,10 +60,13 @@
     </p>
     <h3 for="numberInputAny">請輸入一串英數字：</h3>
     <label>地址也可，但數字請使用半型阿拉伯數字，例如 100台北市中正區重慶南路1段122號</label>
-    <p id="recap-input-2"></p>
-    <input type="text" id="numberInputAny" oninput="skipNonHalfWidthNumbers()"
-        onkeydown="if(event.keyCode == 13){calculateAny()}" style="font-size: 20px;">
+    <br>
+    <input type="text" id="numberInputAny" onkeydown="if(event.keyCode == 13){calculateAny()}" style="font-size: 20px;">
+    <br>
+    <input type="radio" id="no-trans" name="transform-any" value="no" /> 我自己處理 0 跟 5 [給有聽 podcast 的人 XD]<br>
+    <input type="radio" id="trans" name="transform-any" value="yes" checked /> 幫我轉換 0 跟 5 [簡易轉法, 請見最下方說明]<br>
     <button onclick="calculateAny()">計算</button>
+    <p id="recap-input-2"></p>
     <p id="result-any"></p>
     <p id="result-any-stats"></p>
     <hr />
@@ -87,11 +91,14 @@
     </p>
     <hr />
     <p>
-        作者 murmur 區:
+        作者說明區:
     <ul>
         <li>網站不會搜集資料，請安心餵各種數字。</li>
-        <li>0 跟 5 的處理方式是參考好命密碼的書，可能跟 podcast 說得有點不一樣，但程式比較好寫，ㄎ。</li>
+        <li>0 跟 5 的簡易轉換法是參考好命密碼的書（中間的5略過、頭尾5複製旁邊），程式比較好寫。</li>
+        <li>簡易轉法範例 307 = 30,07 = 33,77，所以會一堆伏位唷</li>
+        <li>補習班說的 05 處理法比較複雜，我自己也聽不太懂 囧，有興趣的大德麻煩先手轉...</li>
         <li>參考資料區如果任何原因不想被放上來，請寄信給我，我會立刻撤下：<a href="mailto:sepag27368@wentcity.com">sepag27368@wentcity.com</a></li>
+        <li>發現程式錯誤也歡迎用同個信箱回報，\全民 debug/：<a href="mailto:sepag27368@wentcity.com">sepag27368@wentcity.com</a></li>
     </ul>
 
     </p>
@@ -134,6 +141,7 @@
             }
             return newValue;
         }
+
         function parsePair(value) {
             if (value == '00') {
                 return value
@@ -156,15 +164,23 @@
         }
 
         function getIDInput() {
+            var shouldTrans = document.querySelector('input[name="transform"]:checked').value == 'yes'
+            if (shouldTrans) {
+                return parse05(skipNonHalfWidthNumbers(document.getElementById("numberInput").value));
+            }
             return skipNonHalfWidthNumbers(document.getElementById("numberInput").value);
         }
         function getAnyInput() {
+            var shouldTrans = document.querySelector('input[name="transform-any"]:checked').value == 'yes'
+            if (shouldTrans) {
+                return parse05(skipNonHalfWidthNumbers(document.getElementById("numberInputAny").value));
+            }
             return skipNonHalfWidthNumbers(document.getElementById("numberInputAny").value);
         }
 
         function calculateID() {
             var number = getIDInput()
-            var inputNumber = "您輸入的數字為：<u>" + number + "</u>";
+
 
             var namesCount = {};
 
@@ -173,22 +189,26 @@
             if (number.slice(0, 1) == '0') {
                 overallNum = number.slice(1)
             }
-            console.log(overallNum)
+            console.log("overallNum", overallNum)
 
-            var resDom = document.getElementById("recap-input")
-            resDom.innerHTML = ''
-            resDom.innerHTML += inputNumber
+            // var resDom = document.getElementById("recap-input")
+            // resDom.innerHTML = ''
+            // resDom.innerHTML += inputNumber
 
             var resDom = document.getElementById("result-overall-type")
-            var { numbersLine, namesLine, namesCount, totalNames, table } = calPairs(number);
-            resDom.innerHTML = ''
+            var { numbersLine, namesLine, namesCount, totalNames, table } = calPairs(overallNum);
+            resDom.innerHTML = '<h4>類型：</h4>'
+            resDom.innerHTML += "使用：<u>" + overallNum + "</u> (此項不看開頭0) <br> ";
             var { result, stats } = calOverallType(namesCount, totalNames)
-            resDom.innerHTML += result + stats + "<br>"
+            resDom.innerHTML += numbersLine + '<br>' + namesLine + "<br>"
+            resDom.innerHTML += stats + "<br><br>" + result
 
             // show yearly fortune
             var resDom = document.getElementById("result-yearly-fortune")
             var { numbersLine, namesLine, namesCount, totalNames } = calPairs(number);
-            resDom.innerHTML = ''
+            resDom.innerHTML = '<h4>流年：</h4>'
+            resDom.innerHTML += "流年使用：<u>" + number + "</u><br>";
+            resDom.innerHTML += numbersLine + '<br>' + namesLine + "<br>"
             resDom.innerHTML += table;
         }
         function calculateAny() {
@@ -296,13 +316,6 @@
             }).join(", ")
             return { result, stats }
         }
-
-        document.getElementById("numberInput").addEventListener("keyup", function (event) {
-            if (event.keyCode === 13) {
-                event.preventDefault();
-                calculate();
-            }
-        });
 
         function toFullWidth(str) {
             var fullWidth = "";
