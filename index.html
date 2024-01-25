@@ -97,10 +97,11 @@
         作者說明區 (1/25 update):
     <ul>
         <li>網站不會搜集資料，請安心餵各種數字。</li>
-        <li>目前提供補習班轉法唷，以下各類範例：</li>
-        <li>307 => 30 07 => 33 77 => 伏位x2</li>
-        <li>657 => 67 67 => 生氣x2</li>
-        <li>5550 => 55 55 50 => 55 55 55 => 伏位x3 （這題 ig 有說要變 0000，但 00 似乎不算是伏位？所以暫時看作 55 伏位，期待大神解答）</li>
+        <li>目前提供補習班05轉換法，以下有些範例供參:</li>
+        <li>301 => 331 => 33,31 => 伏位x1, 天醫x1</li>
+        <li>657 => 6767 => 67,76,67=> 生氣x3</li>
+        <li>550 => 000 => 00,00 => 伏位x2</li>
+        <li>5501 => 0001 => 1111 => 11,11,11 => 伏位x3</li>
         <li>參考資料區如果任何原因不想被放上來，請寄信給我，我會立刻撤下：<a href="mailto:sepag27368@wentcity.com">sepag27368@wentcity.com</a></li>
         <li>發現程式錯誤也歡迎用同個信箱回報，\全民 debug/：<a href="mailto:sepag27368@wentcity.com">sepag27368@wentcity.com</a></li>
     </ul>
@@ -213,78 +214,126 @@
             resDom.innerHTML = stats
         }
 
-        function calculate(number) {
-            if (number.length < 2) {
-                // Todo: 處理 input 太短
-                return false
+        function ht5(number) {
+            // heading & tailing 5
+            for (var i = 0; i < number.length; i++) {
+                if (number[i] != '5') {
+                    break
+                }
+                number[i] = '0'
             }
-            var allZero = number.split("").reduce(function (acc, cur) {
-                return acc && cur == '0'
-            }, true)
-            if (allZero) {
-                return false
+            // heading & tailing 5
+            for (var i = number.length - 1; i >= 0; i--) {
+                if (number[i] != '5') {
+                    break
+                }
+                number[i] = '0'
             }
-            var resultPairs = [];
-            // sliding window
-            var saved = false; // first non-zero number
+            // middle 5
+            for (var i = 0; i < number.length; i++) {
+                var n0 = i > 0 ? number[i - 1] : false;
+                var n1 = number[i];
+                // find first non-5
+                var n2 = '0'
+                for (var j = i + 1; j < number.length; j++) {
+                    if (number[j] != '5') {
+                        n2 = number[j]
+                        break
+                    }
+                }
+                if (n1 === '5' && (n0 === '0' || n2 === '0')) {
+                    number[i] = '0'
+                }
+            }
+            return number
+        }
+
+        function ht0(number) {
+            // get first non-zero number
+            var saved = false;
             for (var i = 0; i < number.length; i++) {
                 if (number[i] != '0') {
                     saved = number[i];
                     break
                 }
             }
+            if (saved === false) {
+                // All zero
+                return number
+            }
+            // replace heading 0
+            for (var i = 0; i < number.length; i++) {
+                if (number[i] != '0') {
+                    break
+                }
+                number[i] = saved
+            }
+            // replace middle 0
+            saved = false
+            for (var i = 0; i < number.length; i++) {
+                if (number[i] != '0') {
+                    saved = number[i];
+                } else {
+                    number[i] = saved
+                }
+            }
+            return number
+        }
 
-            for (var i = 0; i < number.length - 1; i++) {
+        function _calculate(number) {
+            if (number.length < 2) {
+                return []
+            }
+
+            if (typeof number === 'string') {
+                number = number.split('')
+            }
+            number = ht5(number)
+            // console.log(number)
+            number = ht0(Array.from(number))
+
+            // duplicate 5
+            var nSeries = []
+            for (var i = 0; i < number.length; i++) {
                 var n0 = i > 0 ? number[i - 1] : false;
                 var n1 = number[i];
-                var n2 = number[i + 1]
-                var n3 = i < number.length - 2 ? number[i + 2] : false;
-                if (n1 != '0') {
-                    saved = n1;
-                }
-                if (n1 == '0') {
-                    if (n2 == '0') {
-                        if (saved !== false) {
-                            resultPairs.push(saved + saved);
-                            continue;
+                if (n1 == '5') {
+                    // calculate successive 5
+                    var tailNum = false;
+                    for (var j = i; j < number.length; j++) {
+                        if (number[j] != '5') {
+                            tailNum = number[j]
+                            break
                         }
-                        resultPairs.push('00');
-                        continue;
-                    } else {
-                        resultPairs.push(n2 + n2);
-                        continue;
                     }
-                }
-                if (n2 == '0') {
-                    resultPairs.push(saved + saved)
+                    for (var k = 0; k < j - i + 1; k++) {
+                        if (k > 0) { nSeries.push(n0) }
+
+                        if (k != j - i) {
+                            nSeries.push(tailNum)
+                        }
+                    }
+                    // all 5 handled
+                    i = j - 1
                     continue
                 }
-                if (n1 + n2 == '55') {
-                    resultPairs.push('55');
-                    continue;
-                }
-                if (n1 == '5') {
-                    if (n0 !== false) {
-                        resultPairs.push(n0 + n2)
-                        continue;
-                    } else {
-                        resultPairs.push(n2 + n2)
-                        continue;
-                    }
-                }
-                if (n2 == '5') {
-                    if (n3 !== false && n3 != '5') {
-                        resultPairs.push(n1 + n3)
-                        continue;
-                    } else {
-                        resultPairs.push(n1 + n1)
-                        continue;
-                    }
-                }
+                nSeries.push(n1)
+            }
+            return nSeries
+        }
 
-                resultPairs.push(n1 + n2)
+
+        function _getPairs(number) {
+            var resultPairs = [];
+            for (var i = 0; i < number.length - 1; i++) {
+                resultPairs.push(number[i] + number[i + 1])
             }
             return resultPairs
+        }
+
+        function calculate(number) {
+            number = _calculate(number)
+            return _getPairs(Array.from(number))
         }
 
         function createViewFromPairs(pairs) {
@@ -337,7 +386,10 @@
                 "36~40歲",
                 "41~45歲",
                 "46~50歲",
-                "51~70歲"
+                "51~70歲",
+                "71~90歲",
+                "91~110歲",
+                "111~130歲",
             ]
             if (i >= arr.length)
                 return "ERROR"
@@ -412,6 +464,7 @@
                 case "73":
                 case "37":
                     return "絕命";
+                case "00":
                 case "11":
                 case "22":
                 case "33":
