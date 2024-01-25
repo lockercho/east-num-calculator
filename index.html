@@ -48,7 +48,7 @@
             href="https://docs.google.com/spreadsheets/u/0/d/18McHGqDtBXo3KZub1rwe8vI3SGXFI7lctMWY9U6yl4c/htmlview">東方靈數
             分享版 </a></p>
 
-    <h2>分析1：人格類型+流年</h2>
+    <h2>分析1：人格類型+人生大運</h2>
     <h3 for="numberInput">請輸入身分證字號：</h3>
     <input type="text" id="numberInput" onkeydown="if(event.keyCode == 13){calculateID()}" style="font-size: 20px;">
     <br>
@@ -184,8 +184,8 @@
             // show yearly fortune
             var resDom = document.getElementById("result-yearly-fortune")
             var { numbersLine, namesLine, namesCount, totalNames, table } = createViewFromPairs(calculate(numberForYearly));
-            resDom.innerHTML = '<h4>流年：</h4>'
-            resDom.innerHTML += "流年使用：<u>" + numberForYearly + "</u><br>";
+            resDom.innerHTML = '<h4>人生大運：</h4>'
+            resDom.innerHTML += "大運使用：<u>" + numberForYearly + "</u><br>";
             resDom.innerHTML += numbersLine + '<br>' + namesLine + "<br>"
             resDom.innerHTML += table;
         }
@@ -345,7 +345,7 @@
             }).join(" ")
             table = "<table><thead><tr><th>階段</th><th>數字</th></tr></thead><tbody>";
             table += pairs.map(function (pair, i) {
-                return "<tr><td>" + getStage(i) + "</td><td>" + getNumberName(pair) + "</td></tr>"
+                return "<tr><td>" + getStage(i, pairs.length) + "</td><td>" + getNumberName(pair) + "</td></tr>"
             }).join("")
             table += "</tbody></table>";
 
@@ -375,22 +375,35 @@
         }
 
 
-        function getStage(i) {
+        function getStage(i, total) {
             var arr = [
-                "0~10歲",
-                "11~15歲",
-                "16~20歲",
-                "21~25歲",
-                "26~30歲",
-                "31~35歲",
-                "36~40歲",
-                "41~45歲",
-                "46~50歲",
-                "51~70歲",
+                "0~10歲", // 0
+                "11~15歲", // 1
+                "16~20歲", // 2
+                "21~25歲", // 3
+                "26~30歲", // 4
+                "31~35歲", // 5
+                "36~40歲", // 6
+                "41~45歲", // 7
+                "46~50歲", // 8
+                "51~70歲", // 9
                 "71~90歲",
                 "91~110歲",
                 "111~130歲",
             ]
+            var arr2 = [
+                "51~60歲",
+                "61~70歲",
+                "71~80歲",
+                "81~90歲",
+                "91~100歲",
+                "101~110歲",
+                "111~120歲",
+                "121~130歲",
+            ]
+            if (i > 8 && total > 10) {
+                return arr2[i - 9]
+            }
             if (i >= arr.length)
                 return "ERROR"
             return arr[i]
