@@ -196,11 +196,16 @@
             var namesCount = {};
 
             var resDom = document.getElementById("recap-input-2")
+            var pairs = calculate(number)
+            if (pairs == false) {
+                resDom.innerHTML = "輸入太短（須為2碼以上英數字，不可全為 0）"
+                return
+            }
             resDom.innerHTML = ''
             resDom.innerHTML += inputNumber
 
             var resDom = document.getElementById("result-any")
-            var { numbersLine, namesLine, namesCount, totalNames, table } = createViewFromPairs(calculate(number));
+            var { numbersLine, namesLine, namesCount, totalNames, table } = createViewFromPairs(pairs);
             resDom.innerHTML = numbersLine + '<br>' + namesLine + "<br>"
 
             var resDom = document.getElementById("result-any-stats")
@@ -211,6 +216,12 @@
         function calculate(number) {
             if (number.length < 2) {
                 // Todo: 處理 input 太短
+                return false
+            }
+            var allZero = number.split("").reduce(function (acc, cur) {
+                return acc && cur == '0'
+            }, true)
+            if (allZero) {
                 return false
             }
             var resultPairs = [];
