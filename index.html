@@ -102,6 +102,9 @@
         <li>657 => 6767 => 67,76,67=> 生氣x3</li>
         <li>550 => 000 => 00,00 => 伏位x2</li>
         <li>5501 => 0001 => 1111 => 11,11,11 => 伏位x3</li>
+        <li>[更新] 統計時伏位會拿去加成前一個數（若伏位開頭則加強後一個）：</li>
+        <li>伏位天醫 = 天醫x2</li>
+        <li>禍害伏位生氣 = 禍害x2 + 生氣 x1</li>
         <li>參考資料區如果任何原因不想被放上來，請寄信給我，我會立刻撤下：<a href="mailto:sepag27368@wentcity.com">sepag27368@wentcity.com</a></li>
         <li>發現程式錯誤也歡迎用同個信箱回報，\全民 debug/：<a href="mailto:sepag27368@wentcity.com">sepag27368@wentcity.com</a></li>
     </ul>
@@ -170,8 +173,9 @@
 
             var resDom = document.getElementById("result-overall-type")
             var pairs = calculate(overallNum)
-            if (pairs == false) {
-                resDom.innerHTML = "輸入太短（須為2碼以上英數字，不可全為 0）"
+            console.log("pairs", pairs)
+            if (pairs.length == 0) {
+                resDom.innerHTML = "輸入太短，須為2碼以上英數字"
                 return
             }
             var { numbersLine, namesLine, namesCount, totalNames, table } = createViewFromPairs(pairs);
@@ -199,7 +203,7 @@
             var resDom = document.getElementById("recap-input-2")
             var pairs = calculate(number)
             if (pairs == false) {
-                resDom.innerHTML = "輸入太短（須為2碼以上英數字，不可全為 0）"
+                resDom.innerHTML = "輸入太短，須為2碼以上英數字"
                 return
             }
             resDom.innerHTML = ''
@@ -351,11 +355,29 @@
 
             var namesCount = {};
             var totalNames = 0;
-            pairs.map(function (pair) {
-                var n = getNumberName(pair)
-                if (n == "ＸＸ") {
-                    return
+            var prevNoneLay = '伏位';
+            for (var i = 0; i < pairs.length; i++) {
+                if (getNumberName(pairs[i]) !== '伏位') {
+                    prevNoneLay = getNumberName(pairs[i])
+                    break
                 }
+            }
+            console.log("prevNoneLay", prevNoneLay)
+            for (var i = 0; i < pairs.length; i++) {
+                var n = getNumberName(pairs[i])
+                console.log(i, n, prevNoneLay)
+                if (n == "伏位") {
+                    // Count the occurrence of each name
+                    if (namesCount[prevNoneLay]) {
+                        namesCount[prevNoneLay]++;
+                    } else {
+                        namesCount[prevNoneLay] = 1;
+                    }
+                    totalNames++;
+                    continue
+                }
+                prevNoneLay = n
+
                 // Count the occurrence of each name
                 if (namesCount[n]) {
                     namesCount[n]++;
@@ -363,7 +385,20 @@
                     namesCount[n] = 1;
                 }
                 totalNames++;
-            })
+            }
+            // pairs.map(function (pair) {
+            //     var n = getNumberName(pair)
+            //     if (n == "ＸＸ") {
+            //         return
+            //     }
+            //     // Count the occurrence of each name
+            //     if (namesCount[n]) {
+            //         namesCount[n]++;
+            //     } else {
+            //         namesCount[n] = 1;
+            //     }
+            //     totalNames++;
+            // })
 
             return {
                 numbersLine: numbersLine,
