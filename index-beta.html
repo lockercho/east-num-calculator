@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>東方靈數（好命密碼）計算器</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-3Y8XCL2WW1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-3Y8XCL2WW1');
+    </script>
+    <!-- bing search -->
+    <meta name="msvalidate.01" content="15E08000B1A2EA68A630CF560DE6CC19" />
+    <!-- adsense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3577336627928306"
+        crossorigin="anonymous"></script>
+    <meta name="description" content="探索東方靈數的神秘世界，使用靈數計算機深入了解您的生命數字和運勢，引導您走向更豐盛的人生。神仙補習班腦粉謹製。">
+</head>
+
+<style>
+    p,
+    input,
+    button {
+        font-size: 20px;
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid black;
+
+    }
+
+    th,
+    td {
+        padding: 2px 20px;
+    }
+
+    .hide {
+        display: none;
+    }
+
+    .striked {
+        text-decoration: line-through;
+    }
+
+    .free-input-label {
+        min-width: 200px
+    }
+</style>
+
+<body>
+    <h1>東方靈數（好命密碼）計算器</h1>
+    <p>計算所輸入數字的東方靈數<br>（生氣、天醫、延年、伏位、絕命、五鬼、六煞、禍害）</p>
+    <p>數字意義解說請看：<a target="_blank"
+            href="https://docs.google.com/spreadsheets/u/0/d/18McHGqDtBXo3KZub1rwe8vI3SGXFI7lctMWY9U6yl4c/htmlview">東方靈數
+            分享版 </a></p>
+    <!-- Section 1 -->
+    <h2>分析1：人格類型+人生大運</h2>
+    <h3 for="numberInput">請輸入身分證字號：</h3>
+    <input type="text" id="numberInput" onkeydown="if(event.keyCode == 13){calculateID()}" style="font-size: 20px;">
+    <br>
+    <button onclick="calculateID()">計算</button>
+
+    <p id="recap-input"></p>
+    <p id="result-overall-type"></p>
+    <p id="result-yearly-fortune"></p>
+    <hr />
+    <!-- Section 2 -->
+    <h2>分析2：任何其他數字（手機、車牌、住址等）</h2>
+    <p>
+        若遇到英文，會依照A=01, B=02, ... 的規則轉換
+        <br />非英文或數字的符號會被跳過
+    </p>
+    <h3 for="numberInputAny">請輸入一串英數字：</h3>
+    <label>地址也可，但數字請使用半型阿拉伯數字，例如 100台北市中正區重慶南路1段122號</label>
+    <br>
+    <input type="text" id="numberInputAny" onkeydown="if(event.keyCode == 13){calculateAny()}" style="font-size: 20px;">
+    <br>
+    <button onclick="calculateAny()">計算</button>
+    <p id="recap-input-2"></p>
+    <p id="result-any"></p>
+    <p id="result-any-stats"></p>
+    <hr />
+    <!-- Section 3 -->
+    <div id="section-3">
+        <h2>分析3：互相消解</h2>
+        <div class="free-input">
+            <input type="text" id="free-input" onkeydown="if(event.keyCode == 13){transformInputToLabel()}"
+                style="font-size: 20px;">
+            <button onclick="transformInputToLabel()">新增</button>
+        </div>
+        <div id="free-input-labels">
+        </div>
+        <p id="recap-free-input"></p>
+        <div id="result-free"></div>
+        <div id="result-free-stats"></div>
+    </div>
+    <hr />
+    <!-- Other notes -->
+    <h2>數字化解口訣</h2>
+    <p>
+        天醫 欺 絕命<br>
+        延年 壓 六煞<br>
+        生氣 補 禍害<br>
+        生氣+天醫+延命 化 五鬼 (順序不可變)<br>
+    </p>
+    <hr />
+    <p>
+        參考資料:
+    <ul>
+        <li><a target="_blank"
+                href="https://docs.google.com/spreadsheets/u/0/d/18McHGqDtBXo3KZub1rwe8vI3SGXFI7lctMWY9U6yl4c/htmlview">
+                東方靈數解釋 分享版 （ \感謝社群/ ） </a></li>
+        <li><a target="_blank" href="https://www.chinyuan.com.tw/all_book/more?id=4878"> 好命密碼 - 數字磁場的魅力 </a></li>
+        <li><a target="_blank" href="https://www.youtube.com/watch?v=7__exuY_6Bg"> 神仙補習班 - 東方靈數 </a></li>
+        <li> <a target="_blank" href="https://www.instagram.com/p/C2RWknTP7ce/"> 神仙補習班 ig </a></li>
+    </ul>
+    </p>
+    <hr />
+    <p>
+        作者說明區 (1/25 update):
+    <ul>
+        <li>網站不會搜集資料，請安心餵各種數字。</li>
+        <li>目前提供補習班05轉換法，以下有些範例供參:</li>
+        <li>301 => 331 => 33,31 => 伏位x1, 天醫x1</li>
+        <li>657 => 6767 => 67,76,67=> 生氣x3</li>
+        <li>550 => 000 => 00,00 => 伏位x2</li>
+        <li>5501 => 0001 => 1111 => 11,11,11 => 伏位x3</li>
+        <li>[更新] 統計時伏位會拿去加成前一個數（若伏位開頭則加強後一個）：</li>
+        <li>伏位天醫 = 天醫x2</li>
+        <li>禍害伏位生氣 = 禍害x2 + 生氣 x1</li>
+        <li>參考資料區如果任何原因不想被放上來，請寄信給我，我會立刻撤下：<a href="mailto:sepag27368@wentcity.com">sepag27368@wentcity.com</a></li>
+        <li>發現程式錯誤也歡迎用同個信箱回報，\全民 debug/：<a href="mailto:sepag27368@wentcity.com">sepag27368@wentcity.com</a></li>
+    </ul>
+
+    </p>
+
+</body>
+
+</html>
+<script>
+    function convertToAlphabeticalOrder(letter) {
+        var lowercaseLetter = letter.toLowerCase();
+        var alphabeticalOrder = lowercaseLetter.charCodeAt(0) - 96;
+        if (alphabeticalOrder > 26 || alphabeticalOrder < 1) {
+            return null;
+        }
+        return alphabeticalOrder.toString().padStart(2, '0');
+    }
+
+    function skipNonHalfWidthNumbers(value) {
+        var newValue = "";
+        for (var i = 0; i < value.length; i++) {
+            var code = value.charCodeAt(i);
+            if (code >= 48 && code <= 57) {
+                newValue += value.charAt(i);
+            } else {
+                var tmp = convertToAlphabeticalOrder(value.charAt(i))
+                if (tmp != null) {
+                    newValue += tmp;
+                }
+            }
+        }
+        return newValue
+    }
+
+
+    function parse05(value, keep5) {
+        var v = value.split("");
+        var newValue = "";
+        for (var i = 0; i < v.length; i++) {
+            if (v[i] == '5' && i > 0 && i < v.length - 1 && keep5 == false) {
+                // skip middle 5
+                continue
+            }
+            newValue += v[i];
+        }
+        return newValue;
+    }
+
+    function getIDInput() {
+        return skipNonHalfWidthNumbers(document.getElementById("numberInput").value);
+    }
+    function getAnyInput() {
+        return skipNonHalfWidthNumbers(document.getElementById("numberInputAny").value);
+    }
+
+    function calculateID() {
+        var numberForOverall = getIDInput()
+        var numberForYearly = getIDInput()
+
+        var namesCount = {};
+
+        // show overall type
+        var overallNum = numberForOverall
+        if (numberForOverall.slice(0, 1) == '0') {
+            overallNum = numberForOverall.slice(1)
+        }
+        console.log("overallNum", overallNum)
+
+
+        var resDom = document.getElementById("result-overall-type")
+        var pairs = calculate(overallNum)
+        console.log("pairs", pairs)
+        if (pairs.length == 0) {
+            resDom.innerHTML = "輸入太短，須為2碼以上英數字"
+            return
+        }
+        var { numbersLine, namesLine, namesCount, totalNames, table } = createViewFromPairs(pairs);
+        resDom.innerHTML = '<h4>類型：</h4>'
+        resDom.innerHTML += "使用：<u>" + overallNum + "</u> (此項不看開頭0) <br> ";
+        var { result, stats } = calOverallType(namesCount, totalNames)
+        resDom.innerHTML += numbersLine + '<br>' + namesLine + "<br>"
+        resDom.innerHTML += stats + "<br><br>" + result
+
+        // show yearly fortune
+        var resDom = document.getElementById("result-yearly-fortune")
+        var { numbersLine, namesLine, namesCount, totalNames, table } = createViewFromPairs(calculate(numberForYearly));
+        resDom.innerHTML = '<h4>人生大運：</h4>'
+        resDom.innerHTML += "大運使用：<u>" + numberForYearly + "</u><br>";
+        resDom.innerHTML += numbersLine + '<br>' + namesLine + "<br>"
+        resDom.innerHTML += table;
+    }
+
+    function calculateAny() {
+        var number = getAnyInput()
+        var inputNumber = "您輸入的數字為：<u>" + number + "</u>";
+
+        var namesCount = {};
+
+        var resDom = document.getElementById("recap-input-2")
+        var pairs = calculate(number)
+        if (pairs == false) {
+            resDom.innerHTML = "輸入太短，須為2碼以上英數字"
+            return
+        }
+        resDom.innerHTML = ''
+        resDom.innerHTML += inputNumber
+
+        var resDom = document.getElementById("result-any")
+        var { numbersLine, namesLine, namesCount, totalNames, table } = createViewFromPairs(pairs);
+        resDom.innerHTML = numbersLine + '<br>' + namesLine + "<br>"
+
+        var resDom = document.getElementById("result-any-stats")
+        var { result, stats } = calOverallType(namesCount, totalNames)
+        resDom.innerHTML = stats
+    }
+
+    var labelIDIncrement = 0;
+    function transformInputToLabel() {
+        var newInput = document.getElementById("free-input").value
+        var resDom = document.getElementById("recap-free-input")
+        var pairs = calculate(newInput)
+        if (pairs == false) {
+            resDom.innerHTML = "輸入太短，須為2碼以上英數字"
+            return false
+        }
+        // Add label
+        var labelDom = document.getElementById("free-input-labels")
+        var labelHTML = '<div id="free-div-' + labelIDIncrement + '">'
+        labelHTML += '<span class="free-input-label" id="free-label-' + labelIDIncrement + '">'
+        labelHTML += newInput
+        labelHTML += '</span>'
+        labelHTML += '<button id="hide-button-' + labelIDIncrement + '" onclick="hideFree(' + labelIDIncrement + ')">隱藏</button>'
+        labelHTML += '<button id="show-button-' + labelIDIncrement + '" class="hide" onclick="showFree(' + labelIDIncrement + ')">顯示</button>'
+        labelHTML += '<button onclick="deleteFree(' + labelIDIncrement + ')">刪除</button>'
+        labelHTML += '</div>'
+        labelIDIncrement++
+        labelDom.innerHTML += labelHTML
+        document.getElementById("free-input").value = ""
+        calculateFree()
+
+    }
+    function hideFree(id) {
+        // add strike to label
+        // hide 'hide' button
+        // show 'show' button
+        document.getElementById("free-label-" + id).classList.add("striked")
+        document.getElementById("hide-button-" + id).classList.add("hide")
+        document.getElementById("show-button-" + id).classList.remove("hide")
+        calculateFree()
+    }
+    function showFree(id) {
+        // remove strike to label
+        // show 'hide' button
+        // hide 'show' button
+        document.getElementById("free-label-" + id).classList.remove("striked")
+        document.getElementById("hide-button-" + id).classList.remove("hide")
+        document.getElementById("show-button-" + id).classList.add("hide")
+        calculateFree()
+    }
+
+    function deleteFree(id) {
+        document.getElementById("free-div-" + id).remove()
+        calculateFree()
+    }
+
+    function getFreeInputLabels() {
+        var nodeList = document.querySelectorAll('.free-input-label')
+        var res = []
+        for (var i = 0; i < nodeList.length; i++) {
+            if (!nodeList[i].classList.contains("striked")) {
+                res.push(skipNonHalfWidthNumbers(nodeList[i].innerText))
+            }
+        }
+        return res;
+    }
+
+    function calculateFree() {
+
+        var numbers = getFreeInputLabels() // Todo
+        var allPairs = []
+        var viewPairs = []
+        var allNamesCount = {}
+        var allTotalNames = 0
+        console.log(numbers)
+        var allNamesLine = ""
+
+
+
+        for (var i = 0; i < numbers.length; i++) {
+            pairs = calculate(numbers[i])
+            allPairs = allPairs.concat(pairs)
+            var { numbersLine, namesLine, namesCount, totalNames, table } = createViewFromPairs(pairs);
+            allTotalNames += totalNames
+            // merge dict
+            for (var key in namesCount) {
+                if (allNamesCount[key]) {
+                    allNamesCount[key] += namesCount[key]
+                } else {
+                    allNamesCount[key] = namesCount[key]
+                }
+            }
+            console.log("test", namesCount, totalNames)
+            var { numbersLine, namesLine, namesCount, totalNames, table } = createViewFromPairs(pairs);
+            allNamesLine += numbersLine + '<br>' + namesLine + "<br>"
+        }
+
+        var resDom = document.getElementById("result-free")
+
+        // resDom.innerHTML = numbersLine + '<br>' + namesLine + "<br>"
+        resDom.innerHTML = allNamesLine
+
+        console.log(allNamesCount, allTotalNames)
+        var resDom = document.getElementById("result-free-stats")
+        var { result, stats } = calOverallType(allNamesCount, allTotalNames)
+        resDom.innerHTML = '<h3>總 Total</h3>'
+        resDom.innerHTML += stats
+    }
+
+
+    function ht5(number) {
+        // heading & tailing 5
+        for (var i = 0; i < number.length; i++) {
+            if (number[i] != '5') {
+                break
+            }
+            number[i] = '0'
+        }
+        // heading & tailing 5
+        for (var i = number.length - 1; i >= 0; i--) {
+            if (number[i] != '5') {
+                break
+            }
+            number[i] = '0'
+        }
+        // middle 5
+        for (var i = 0; i < number.length; i++) {
+            var n0 = i > 0 ? number[i - 1] : false;
+            var n1 = number[i];
+            // find first non-5
+            var n2 = '0'
+            for (var j = i + 1; j < number.length; j++) {
+                if (number[j] != '5') {
+                    n2 = number[j]
+                    break
+                }
+            }
+            if (n1 === '5' && (n0 === '0' || n2 === '0')) {
+                number[i] = '0'
+            }
+        }
+        return number
+    }
+
+    function ht0(number) {
+        // get first non-zero number
+        var saved = false;
+        for (var i = 0; i < number.length; i++) {
+            if (number[i] != '0') {
+                saved = number[i];
+                break
+            }
+        }
+        if (saved === false) {
+            // All zero
+            return number
+        }
+        // replace heading 0
+        for (var i = 0; i < number.length; i++) {
+            if (number[i] != '0') {
+                break
+            }
+            number[i] = saved
+        }
+        // replace middle 0
+        saved = false
+        for (var i = 0; i < number.length; i++) {
+            if (number[i] != '0') {
+                saved = number[i];
+            } else {
+                number[i] = saved
+            }
+        }
+        return number
+    }
+
+    function _calculate(number) {
+        if (number.length < 2) {
+            return []
+        }
+
+        if (typeof number === 'string') {
+            number = number.split('')
+        }
+        number = ht5(number)
+        // console.log(number)
+        number = ht0(Array.from(number))
+
+        // duplicate 5
+        var nSeries = []
+        for (var i = 0; i < number.length; i++) {
+            var n0 = i > 0 ? number[i - 1] : false;
+            var n1 = number[i];
+            if (n1 == '5') {
+                // calculate successive 5
+                var tailNum = false;
+                for (var j = i; j < number.length; j++) {
+                    if (number[j] != '5') {
+                        tailNum = number[j]
+                        break
+                    }
+                }
+                for (var k = 0; k < j - i + 1; k++) {
+                    if (k > 0) { nSeries.push(n0) }
+
+                    if (k != j - i) {
+                        nSeries.push(tailNum)
+                    }
+                }
+                // all 5 handled
+                i = j - 1
+                continue
+            }
+            nSeries.push(n1)
+        }
+        return nSeries
+    }
+
+
+    function _getPairs(number) {
+        var resultPairs = [];
+        for (var i = 0; i < number.length - 1; i++) {
+            resultPairs.push(number[i] + number[i + 1])
+        }
+        return resultPairs
+    }
+
+    function calculate(number) {
+        number = _calculate(number)
+        return _getPairs(Array.from(number))
+    }
+
+    function createViewFromPairs(pairs) {
+        numbersLine = pairs.map(function (pair) {
+            return "<u>" + toFullWidth(pair) + "</u> ";
+        }).join(" ")
+        namesLine = pairs.map(function (pair) {
+            return getNumberName(pair) + " ";
+        }).join(" ")
+        table = "<table><thead><tr><th>階段</th><th>數字</th></tr></thead><tbody>";
+        table += pairs.map(function (pair, i) {
+            return "<tr><td>" + getStage(i, pairs.length) + "</td><td>" + getNumberName(pair) + "</td></tr>"
+        }).join("")
+        table += "</tbody></table>";
+
+        var namesCount = {};
+        var totalNames = 0;
+        var prevNoneLay = '伏位';
+        for (var i = 0; i < pairs.length; i++) {
+            if (getNumberName(pairs[i]) !== '伏位') {
+                prevNoneLay = getNumberName(pairs[i])
+                break
+            }
+        }
+        console.log("prevNoneLay", prevNoneLay)
+        for (var i = 0; i < pairs.length; i++) {
+            var n = getNumberName(pairs[i])
+            console.log(i, n, prevNoneLay)
+            if (n == "伏位") {
+                // Count the occurrence of each name
+                if (namesCount[prevNoneLay]) {
+                    namesCount[prevNoneLay]++;
+                } else {
+                    namesCount[prevNoneLay] = 1;
+                }
+                totalNames++;
+                continue
+            }
+            prevNoneLay = n
+
+            // Count the occurrence of each name
+            if (namesCount[n]) {
+                namesCount[n]++;
+            } else {
+                namesCount[n] = 1;
+            }
+            totalNames++;
+        }
+        return {
+            numbersLine: numbersLine,
+            namesLine: namesLine,
+            namesCount: namesCount,
+            totalNames: totalNames,
+            table: table
+        }
+    }
+
+
+    function getStage(i, total) {
+        var arr = [
+            "0~10歲", // 0
+            "11~15歲", // 1
+            "16~20歲", // 2
+            "21~25歲", // 3
+            "26~30歲", // 4
+            "31~35歲", // 5
+            "36~40歲", // 6
+            "41~45歲", // 7
+            "46~50歲", // 8
+            "51~70歲", // 9
+            "71~90歲",
+            "91~110歲",
+            "111~130歲",
+        ]
+        var arr2 = [
+            "51~60歲",
+            "61~70歲",
+            "71~80歲",
+            "81~90歲",
+            "91~100歲",
+            "101~110歲",
+            "111~120歲",
+            "121~130歲",
+        ]
+        if (i > 8 && total > 10) {
+            return arr2[i - 9]
+        }
+        if (i >= arr.length)
+            return "ERROR"
+        return arr[i]
+    }
+
+    function calOverallType(namesCount, totalNames) {
+        // Create items array
+        var sortedNames = Object.keys(namesCount).map(function (key) {
+            // key, count, percentage
+            return [key, namesCount[key], namesCount[key] / totalNames];
+        });
+        // Sort the array based on the second element
+        sortedNames = sortedNames.sort(function (first, second) {
+            return second[1] - first[1];
+        });
+        var result = "您為「<strong>" + sortedNames[0][0] + "</strong>」型的人<br>";
+        var stats = sortedNames.map(function (v) {
+            return v[0] + ": " + v[1] + " (" + (v[2] * 100).toFixed(1) + "%)";
+        }).join(", ")
+        return { result, stats }
+    }
+
+    function toFullWidth(str) {
+        var fullWidth = "";
+        for (var i = 0; i < str.length; i++) {
+            var code = str.charCodeAt(i);
+            if (code >= 48 && code <= 57) {
+                fullWidth += String.fromCharCode(code + 65248);
+            } else {
+                fullWidth += str.charAt(i);
+            }
+        }
+        return fullWidth;
+    }
+
+    function getNumberName(pair) {
+        switch (pair) {
+            case "17":
+            case "71":
+            case "89":
+            case "98":
+            case "46":
+            case "64":
+            case "23":
+            case "32":
+                return "禍害";
+            case "16":
+            case "61":
+            case "47":
+            case "74":
+            case "38":
+            case "83":
+            case "92":
+            case "29":
+                return "六煞";
+            case "18":
+            case "81":
+            case "79":
+            case "97":
+            case "42":
+            case "24":
+            case "36":
+            case "63":
+                return "五鬼";
+            case "12":
+            case "21":
+            case "96":
+            case "69":
+            case "84":
+            case "48":
+            case "73":
+            case "37":
+                return "絕命";
+            case "00":
+            case "11":
+            case "22":
+            case "33":
+            case "44":
+            case "55":
+            case "66":
+            case "77":
+            case "88":
+            case "99":
+                return "伏位";
+            case "19":
+            case "91":
+            case "87":
+            case "78":
+            case "34":
+            case "43":
+            case "26":
+            case "62":
+                return "延年";
+            case "13":
+            case "31":
+            case "68":
+            case "86":
+            case "49":
+            case "94":
+            case "72":
+            case "27":
+                return "天醫";
+            case "14":
+            case "41":
+            case "76":
+            case "67":
+            case "93":
+            case "39":
+            case "82":
+            case "28":
+                return "生氣";
+            default:
+                return "ＸＸ";
+        }
+    }
+</script>
