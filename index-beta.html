@@ -49,7 +49,17 @@
     }
 
     .free-input-label {
-        min-width: 200px
+        padding: 5px 10px;
+        font-size: 20px;
+    }
+
+    button {
+        margin: 0 10px 0 0;
+    }
+
+    .gray {
+        color: gray;
+        font-style: italic;
     }
 </style>
 
@@ -88,7 +98,11 @@
     <hr />
     <!-- Section 3 -->
     <div id="section-3">
-        <h2>分析3：互相消解</h2>
+        <h2>分析3：互相消解（測試版）</h2>
+        <p>
+            身分證字號 / 手機 / 車牌 / 住址 / 其他數字等湊在一起計算。<br>
+            看相互抵銷後最後是哪些靈數。
+        </p>
         <div class="free-input">
             <input type="text" id="free-input" onkeydown="if(event.keyCode == 13){transformInputToLabel()}"
                 style="font-size: 20px;">
@@ -97,8 +111,8 @@
         <div id="free-input-labels">
         </div>
         <p id="recap-free-input"></p>
-        <div id="result-free"></div>
-        <div id="result-free-stats"></div>
+        <p id="result-free"></p>
+        <p id="result-free-stats"></p>
     </div>
     <hr />
     <!-- Other notes -->
@@ -134,6 +148,7 @@
         <li>[更新] 統計時伏位會拿去加成前一個數（若伏位開頭則加強後一個）：</li>
         <li>伏位天醫 = 天醫x2</li>
         <li>禍害伏位生氣 = 禍害x2 + 生氣 x1</li>
+        <li>由[伏位]代換成的其他靈數，會顯示為<span class="gray">灰色</span></li>
         <li>參考資料區如果任何原因不想被放上來，請寄信給我，我會立刻撤下：<a href="mailto:sepag27368@wentcity.com">sepag27368@wentcity.com</a></li>
         <li>發現程式錯誤也歡迎用同個信箱回報，\全民 debug/：<a href="mailto:sepag27368@wentcity.com">sepag27368@wentcity.com</a></li>
     </ul>
@@ -211,7 +226,7 @@
             resDom.innerHTML = "輸入太短，須為2碼以上英數字"
             return
         }
-        var { numbersLine, namesLine, namesCount, totalNames, table } = createViewFromPairs(pairs);
+        var { numbersLine, namesLine, namesCount, totalNames, table, realSeq } = createViewFromPairs(pairs);
         resDom.innerHTML = '<h4>類型：</h4>'
         resDom.innerHTML += "使用：<u>" + overallNum + "</u> (此項不看開頭0) <br> ";
         var { result, stats } = calOverallType(namesCount, totalNames)
@@ -220,7 +235,7 @@
 
         // show yearly fortune
         var resDom = document.getElementById("result-yearly-fortune")
-        var { numbersLine, namesLine, namesCount, totalNames, table } = createViewFromPairs(calculate(numberForYearly));
+        var { numbersLine, namesLine, namesCount, totalNames, table, realSeq } = createViewFromPairs(calculate(numberForYearly));
         resDom.innerHTML = '<h4>人生大運：</h4>'
         resDom.innerHTML += "大運使用：<u>" + numberForYearly + "</u><br>";
         resDom.innerHTML += numbersLine + '<br>' + namesLine + "<br>"
@@ -243,7 +258,7 @@
         resDom.innerHTML += inputNumber
 
         var resDom = document.getElementById("result-any")
-        var { numbersLine, namesLine, namesCount, totalNames, table } = createViewFromPairs(pairs);
+        var { numbersLine, namesLine, namesCount, totalNames, table, realSeq } = createViewFromPairs(pairs);
         resDom.innerHTML = numbersLine + '<br>' + namesLine + "<br>"
 
         var resDom = document.getElementById("result-any-stats")
@@ -310,23 +325,58 @@
         }
         return res;
     }
-
+    function payoffFiveGhost(sequence, payOffCount, allNamesCount) {
+        for (var i = 0; i < sequence.length - 2; i++) {
+            var n1 = sequence[i]
+            var n2 = sequence[i + 1]
+            var n3 = sequence[i + 2]
+            if (payOffCount > 0 && n1 === '生氣' && n2 === '天醫' && n3 === '延年') {
+                sequence[i] = '';
+                sequence[i + 1] = '';
+                sequence[i + 2] = '';
+                allNamesCount[n1]--;
+                allNamesCount[n2]--;
+                allNamesCount[n3]--;
+                payOffCount--;
+            }
+        }
+        return {
+            newSequence: sequence.filter(function (v) { return v !== '' }),
+            payOffCount
+        }
+    }
+    function payoffOthers(sequence, target, payOffCount, allNamesCount) {
+        var mapping = {
+            '絕命': '天醫', '六煞': '延年', '禍害': '生氣'
+        }
+        for (var i = 0; i < sequence.length; i++) {
+            var n1 = sequence[i]
+            if (payOffCount > 0 && n1 === mapping[target]) {
+                sequence[i] = '';
+                allNamesCount[n1]--;
+                payOffCount--;
+            }
+        }
+        return {
+            newSequence: sequence.filter(function (v) { return v !== '' }),
+            payOffCount
+        }
+    }
     function calculateFree() {
-
         var numbers = getFreeInputLabels() // Todo
         var allPairs = []
+        var allPairsForPayoff = []
         var viewPairs = []
         var allNamesCount = {}
         var allTotalNames = 0
         console.log(numbers)
         var allNamesLine = ""
 
-
-
         for (var i = 0; i < numbers.length; i++) {
             pairs = calculate(numbers[i])
             allPairs = allPairs.concat(pairs)
-            var { numbersLine, namesLine, namesCount, totalNames, table } = createViewFromPairs(pairs);
+            var { numbersLine, namesLine, namesCount, totalNames, table, realSeq } = createViewFromPairs(pairs);
+            allPairsForPayoff.push(realSeq)
             allTotalNames += totalNames
             // merge dict
             for (var key in namesCount) {
@@ -336,20 +386,61 @@
                     allNamesCount[key] = namesCount[key]
                 }
             }
-            console.log("test", namesCount, totalNames)
-            var { numbersLine, namesLine, namesCount, totalNames, table } = createViewFromPairs(pairs);
             allNamesLine += numbersLine + '<br>' + namesLine + "<br>"
         }
+        console.log("test allPairsForPayoff", allPairsForPayoff)
+        console.log("allNamesCount", allNamesCount)
 
+        // Payoff good and bad
+        if (allNamesCount['五鬼'] > 0) {
+            for (var i = 0; i < allPairsForPayoff.length; i++) {
+                var sequence = allPairsForPayoff[i]
+                var { newSequence, payOffCount } = payoffFiveGhost(sequence, allNamesCount['五鬼'], allNamesCount)
+                console.log("payOffCount123", payOffCount)
+                allPairsForPayoff[i] = newSequence
+                allNamesCount['五鬼'] = payOffCount
+                if (payOffCount == 0) {
+                    break
+                }
+            }
+        }
+        console.log("after 5 ghost", allPairsForPayoff)
+        var others = ["禍害", "六煞", "絕命"]
+        others.map(function (target) {
+            if (!allNamesCount[target]) {
+                return
+            }
+            console.log("after 5 ghost qweqew", allPairsForPayoff)
+            for (var i = 0; i < allPairsForPayoff.length; i++) {
+                var sequence = allPairsForPayoff[i]
+                var { newSequence, payOffCount } = payoffOthers(sequence, target, allNamesCount[target], allNamesCount)
+                allPairsForPayoff[i] = newSequence
+                allNamesCount[target] = payOffCount
+                if (allNamesCount[target] == 0) {
+                    break
+                }
+            }
+        })
+        console.log("allPairsForPayoff", allPairsForPayoff)
+        console.log("allNamesCount", allNamesCount)
+
+        // Show final result
         var resDom = document.getElementById("result-free")
-
-        // resDom.innerHTML = numbersLine + '<br>' + namesLine + "<br>"
         resDom.innerHTML = allNamesLine
 
         console.log(allNamesCount, allTotalNames)
+        // Show paid off result
         var resDom = document.getElementById("result-free-stats")
-        var { result, stats } = calOverallType(allNamesCount, allTotalNames)
-        resDom.innerHTML = '<h3>總 Total</h3>'
+        var totalCount = Object.keys(allNamesCount).reduce(function (acc, key) {
+            return acc + allNamesCount[key];
+        }, 0);
+        if (totalCount === 0) {
+            resDom.innerHTML = '<h3>小結</h3 >'
+            resDom.innerHTML += "吉數凶數全部抵銷。"
+            return
+        }
+        var { result, stats } = calOverallType(allNamesCount, totalCount)
+        resDom.innerHTML = '<h3>小結</h3 >'
         resDom.innerHTML += stats
     }
 
@@ -481,7 +572,7 @@
             return "<u>" + toFullWidth(pair) + "</u> ";
         }).join(" ")
         namesLine = pairs.map(function (pair) {
-            return getNumberName(pair) + " ";
+            return "<span>" + getNumberName(pair) + "</span> ";
         }).join(" ")
         table = "<table><thead><tr><th>階段</th><th>數字</th></tr></thead><tbody>";
         table += pairs.map(function (pair, i) {
@@ -498,7 +589,8 @@
                 break
             }
         }
-        console.log("prevNoneLay", prevNoneLay)
+        var realSeq = []
+
         for (var i = 0; i < pairs.length; i++) {
             var n = getNumberName(pairs[i])
             console.log(i, n, prevNoneLay)
@@ -509,6 +601,7 @@
                 } else {
                     namesCount[prevNoneLay] = 1;
                 }
+                realSeq.push(prevNoneLay)
                 totalNames++;
                 continue
             }
@@ -520,14 +613,23 @@
             } else {
                 namesCount[n] = 1;
             }
+            realSeq.push(n)
             totalNames++;
         }
+        var realNamesLine = realSeq.map(function (name, idx) {
+            if (getNumberName(pairs[idx]) == "伏位") {
+                return '<span class="gray">' + name + "</span> ";
+            }
+            return "<span>" + name + "</span> ";
+        }).join(" ")
+        namesLine = realNamesLine // test
         return {
             numbersLine: numbersLine,
             namesLine: namesLine,
             namesCount: namesCount,
             totalNames: totalNames,
-            table: table
+            table: table,
+            realSeq: realSeq
         }
     }
 
@@ -569,9 +671,12 @@
     function calOverallType(namesCount, totalNames) {
         // Create items array
         var sortedNames = Object.keys(namesCount).map(function (key) {
+            if (namesCount[key] == 0) {
+                return false
+            }
             // key, count, percentage
             return [key, namesCount[key], namesCount[key] / totalNames];
-        });
+        }).filter(function (v) { return v !== false });
         // Sort the array based on the second element
         sortedNames = sortedNames.sort(function (first, second) {
             return second[1] - first[1];
