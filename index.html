@@ -100,6 +100,10 @@
     header {
         margin-bottom: 20px;
     }
+
+    #result-free-stats {
+        margin-bottom: 40px;
+    }
 </style>
 
 <body class="container">
@@ -115,7 +119,7 @@
         <div class="card-body">
             <h2 class="card-title">分析1：人格類型+人生大運</h2>
             <p for="numberInput">請輸入身分證字號：</p>
-            <input type="text" id="numberInput" onkeydown="if(event.keyCode == 13){calculateID()}"
+            <input autofocus type="text" id="numberInput" onkeydown="if(event.keyCode == 13){calculateID()}"
                 style="font-size: 20px;">
             <button class="btn btn-light" onclick="calculateID()">計算</button>
 
