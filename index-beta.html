@@ -204,6 +204,11 @@
     function getAnyInput() {
         return skipNonHalfWidthNumbers(document.getElementById("numberInputAny").value);
     }
+    var explanation = '<br>類型說明:<br>';
+    explanation += '<li>（1）由[伏位] 代換成的其他靈數，會顯示為灰色斜線</li>';
+    explanation += '<li>（2）[伏位] 會延續前面的數字能量</li>';
+    explanation += '<li>（3）[生氣] 也會放大前面數字能量</li>';
+    explanation += '<li>（4）比例要視數字強弱程度下調</li >';
 
     function calculateID() {
         var numberForOverall = getIDInput()
@@ -232,6 +237,7 @@
         var { result, stats } = calOverallType(namesCount, totalNames)
         resDom.innerHTML += numbersLine + '<br>' + namesLine + "<br>"
         resDom.innerHTML += stats + "<br><br>" + result
+        resDom.innerHTML += explanation;
 
         // show yearly fortune
         var resDom = document.getElementById("result-yearly-fortune")
@@ -583,12 +589,6 @@
         var namesCount = {};
         var totalNames = 0;
         var prevNoneLay = '伏位';
-        for (var i = 0; i < pairs.length; i++) {
-            if (getNumberName(pairs[i]) !== '伏位') {
-                prevNoneLay = getNumberName(pairs[i])
-                break
-            }
-        }
         var realSeq = []
 
         for (var i = 0; i < pairs.length; i++) {
@@ -617,7 +617,7 @@
             totalNames++;
         }
         var realNamesLine = realSeq.map(function (name, idx) {
-            if (getNumberName(pairs[idx]) == "伏位") {
+            if (getNumberName(pairs[idx]) == "伏位" && name != "伏位") {
                 return '<span class="gray">' + name + "</span> ";
             }
             return "<span>" + name + "</span> ";
