@@ -20,12 +20,22 @@
         crossorigin="anonymous"></script>
     <meta name="description" content="探索東方靈數的神秘世界，使用靈數計算機深入了解您的生命數字和運勢，引導您走向更豐盛的人生。神仙補習班腦粉謹製。">
 </head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+    crossorigin="anonymous"></script>
 
 <style>
     p,
+    div,
     input,
     button {
         font-size: 20px;
+    }
+
+    body {
+        background-color: #fffaf0;
     }
 
     table,
@@ -61,68 +71,116 @@
         color: gray;
         font-style: italic;
     }
+
+    .callout {
+        --bs-link-color-rgb: var(--bd-callout-link);
+        --bs-code-color: var(--bd-callout-code-color);
+        padding: 1.25rem;
+        margin-top: 1.25rem;
+        margin-bottom: 1.25rem;
+        color: var(--bd-callout-color, inherit);
+        background-color: var(--bd-callout-bg, var(--bs-gray-100));
+        border-left: 0.25rem solid var(--bd-callout-border, var(--bs-gray-300));
+    }
+
+    .btn-light {
+        margin: 10px 0;
+        border: 1px solid hsl(0deg, 0%, 86%)
+    }
+
+    .btn {
+        margin-right: 10px;
+    }
+
+    h1 {
+        padding-top: 20px;
+    }
+
+    input {
+        vertical-align: middle;
+    }
+
+    header {
+        margin-bottom: 20px;
+    }
 </style>
 
-<body>
-    <h1>東方靈數（好命密碼）計算器</h1>
-    <p>計算所輸入數字的東方靈數<br>（生氣、天醫、延年、伏位、絕命、五鬼、六煞、禍害）</p>
-    <p>數字意義解說請看：<a target="_blank"
+<body class="container">
+    <header>
+        <h1>東方靈數（好命密碼）計算器</h1>
+    </header>
+    <div>計算所輸入數字的東方靈數<br>（生氣、天醫、延年、伏位、絕命、五鬼、六煞、禍害）</div>
+    <p><br>數字意義解說請看：<a target="_blank"
             href="https://docs.google.com/spreadsheets/u/0/d/18McHGqDtBXo3KZub1rwe8vI3SGXFI7lctMWY9U6yl4c/htmlview">東方靈數
             分享版 </a></p>
     <!-- Section 1 -->
-    <h2>分析1：人格類型+人生大運</h2>
-    <h3 for="numberInput">請輸入身分證字號：</h3>
-    <input type="text" id="numberInput" onkeydown="if(event.keyCode == 13){calculateID()}" style="font-size: 20px;">
-    <br>
-    <button onclick="calculateID()">計算</button>
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">分析1：人格類型+人生大運</h2>
+            <p for="numberInput">請輸入身分證字號：</p>
+            <input type="text" id="numberInput" onkeydown="if(event.keyCode == 13){calculateID()}"
+                style="font-size: 20px;">
+            <button class="btn btn-light" onclick="calculateID()">計算</button>
 
-    <p id="recap-input"></p>
-    <p id="result-overall-type"></p>
-    <p id="result-yearly-fortune"></p>
+            <p id="recap-input"></p>
+            <p id="result-overall-type"></p>
+            <p id="result-yearly-fortune"></p>
+        </div>
+    </div>
     <hr />
     <!-- Section 2 -->
-    <h2>分析2：任何其他數字（手機、車牌、住址等）</h2>
-    <p>
-        若遇到英文，會依照A=01, B=02, ... 的規則轉換
-        <br />非英文或數字的符號會被跳過
-    </p>
-    <h3 for="numberInputAny">請輸入一串英數字：</h3>
-    <label>地址也可，但數字請使用半型阿拉伯數字，例如 100台北市中正區重慶南路1段122號</label>
-    <br>
-    <input type="text" id="numberInputAny" onkeydown="if(event.keyCode == 13){calculateAny()}" style="font-size: 20px;">
-    <br>
-    <button onclick="calculateAny()">計算</button>
-    <p id="recap-input-2"></p>
-    <p id="result-any"></p>
-    <p id="result-any-stats"></p>
+    <div class="card">
+        <div class="card-body">
+            <h2 class="card-title">分析2：一組數字（手機、車牌、住址等）</h2>
+            <p>
+                若遇到英文，會依照A=01, B=02, ... 的規則轉換
+                <br />非英文或數字的符號會被跳過
+            </p>
+
+            <p>地址也可，但數字請使用半型阿拉伯數字，例如 100台北市中正區重慶南路1段122號</p>
+            <h4 for="numberInputAny">請輸入一串英數字：</h4>
+            <input type="text" id="numberInputAny" onkeydown="if(event.keyCode == 13){calculateAny()}"
+                style="font-size: 20px;">
+            <button class="btn btn-light" onclick="calculateAny()">計算</button>
+            <p id="recap-input-2"></p>
+            <p id="result-any"></p>
+            <p id="result-any-stats"></p>
+        </div>
+    </div>
     <hr />
     <!-- Section 3 -->
-    <div id="section-3">
-        <h2>分析3：互相消解（測試版）</h2>
-        <p>
-            身分證字號 / 手機 / 車牌 / 住址 / 其他數字等湊在一起計算。<br>
-            看相互抵銷後最後是哪些靈數。
-        </p>
-        <div class="free-input">
-            <input type="text" id="free-input" onkeydown="if(event.keyCode == 13){transformInputToLabel()}"
-                style="font-size: 20px;">
-            <button onclick="transformInputToLabel()">新增</button>
+    <div class="card" id="section-3">
+        <div class="card-body">
+            <h2 class="card-title">分析3：多組數字</h2>
+            <p>
+                身分證字號 / 手機 / 車牌 / 住址 / 其他數字等多組一起計算。<br>
+                看相互抵銷後最後是哪些靈數。
+            </p>
+            <div class="free-input">
+                <input type="text" id="free-input" onkeydown="if(event.keyCode == 13){transformInputToLabel()}"
+                    style="font-size: 20px;">
+                <button class="btn btn-light" onclick="transformInputToLabel()">新增</button>
+            </div>
+            <div id="free-input-labels">
+            </div>
+            <p id="recap-free-input"></p>
+            <p id="result-free"></p>
+            <p id="result-free-stats"></p>
         </div>
-        <div id="free-input-labels">
-        </div>
-        <p id="recap-free-input"></p>
-        <p id="result-free"></p>
-        <p id="result-free-stats"></p>
     </div>
     <hr />
     <!-- Other notes -->
-    <h2>數字化解口訣</h2>
-    <p>
-        天醫 欺 絕命<br>
-        延年 壓 六煞<br>
-        生氣 補 禍害<br>
-        生氣+天醫+延命 化 五鬼 (順序不可變)<br>
-    </p>
+    <div class="card" id="tips">
+        <div class="card-body">
+            <h2>數字化解口訣</h2>
+            <p>
+                <u>天醫</u> 欺 <u>絕命</u><br>
+                <u>延年</u> 壓 <u>六煞</u><br>
+                <u>生氣</u> 補 <u>禍害</u><br>
+                <u>生氣+天醫+延命</u> 化 <u>五鬼</u> (順序不可變)<br>
+            </p>
+        </div>
+    </div>
     <hr />
     <p>
         參考資料:
@@ -145,8 +203,7 @@
         <li>657 => 6767 => 67,76,67=> 生氣x3</li>
         <li>550 => 000 => 00,00 => 伏位x2</li>
         <li>5501 => 0001 => 1111 => 11,11,11 => 伏位x3</li>
-        <li>[更新] 統計時伏位會拿去加成前一個數（若伏位開頭則加強後一個）：</li>
-        <li>伏位天醫 = 天醫x2</li>
+        <li>[更新] 統計時伏位會拿去加成前一個數：</li>
         <li>禍害伏位生氣 = 禍害x2 + 生氣 x1</li>
         <li>由[伏位]代換成的其他靈數，會顯示為<span class="gray">灰色</span></li>
         <li>參考資料區如果任何原因不想被放上來，請寄信給我，我會立刻撤下：<a href="mailto:sepag27368@wentcity.com">sepag27368@wentcity.com</a></li>
@@ -204,11 +261,11 @@
     function getAnyInput() {
         return skipNonHalfWidthNumbers(document.getElementById("numberInputAny").value);
     }
-    var explanation = '<br>類型說明:<br>';
+    var explanation = '<div><br>類型說明:<br>';
     explanation += '<li>（1）由[伏位] 代換成的其他靈數，會顯示為灰色斜線</li>';
     explanation += '<li>（2）[伏位] 會延續前面的數字能量</li>';
     explanation += '<li>（3）[生氣] 也會放大前面數字能量</li>';
-    explanation += '<li>（4）比例要視數字強弱程度下調</li >';
+    explanation += '<li>（4）比例要視數字強弱程度下調</li ></div>';
 
     function calculateID() {
         var numberForOverall = getIDInput()
@@ -243,8 +300,11 @@
         var resDom = document.getElementById("result-yearly-fortune")
         var { numbersLine, namesLine, namesCount, totalNames, table, realSeq } = createViewFromPairs(calculate(numberForYearly));
         resDom.innerHTML = '<h4>人生大運：</h4>'
+        resDom.innerHTML += "<div>"
         resDom.innerHTML += "大運使用：<u>" + numberForYearly + "</u><br>";
         resDom.innerHTML += numbersLine + '<br>' + namesLine + "<br>"
+        resDom.innerHTML += "</div>"
+        resDom.innerHTML += "<br>"
         resDom.innerHTML += table;
     }
 
@@ -273,6 +333,8 @@
     }
 
     var labelIDIncrement = 0;
+    var hideIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-slash-fill" viewBox="0 0 16 16"><path d="m10.79 12.912-1.614-1.615a3.5 3.5 0 0 1-4.474-4.474l-2.06-2.06C.938 6.278 0 8 0 8s3 5.5 8 5.5a7 7 0 0 0 2.79-.588M5.21 3.088A7 7 0 0 1 8 2.5c5 0 8 5.5 8 5.5s-.939 1.721-2.641 3.238l-2.062-2.062a3.5 3.5 0 0 0-4.474-4.474z"/><path d="M5.525 7.646a2.5 2.5 0 0 0 2.829 2.829zm4.95.708-2.829-2.83a2.5 2.5 0 0 1 2.829 2.829zm3.171 6-12-12 .708-.708 12 12z"/></svg>';
+    var showIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16"><path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/><path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/></svg>'
     function transformInputToLabel() {
         var newInput = document.getElementById("free-input").value
         var resDom = document.getElementById("recap-free-input")
@@ -287,15 +349,14 @@
         labelHTML += '<span class="free-input-label" id="free-label-' + labelIDIncrement + '">'
         labelHTML += newInput
         labelHTML += '</span>'
-        labelHTML += '<button id="hide-button-' + labelIDIncrement + '" onclick="hideFree(' + labelIDIncrement + ')">隱藏</button>'
-        labelHTML += '<button id="show-button-' + labelIDIncrement + '" class="hide" onclick="showFree(' + labelIDIncrement + ')">顯示</button>'
-        labelHTML += '<button onclick="deleteFree(' + labelIDIncrement + ')">刪除</button>'
+        labelHTML += '<button class="btn btn-light" id="hide-button-' + labelIDIncrement + '" onclick="hideFree(' + labelIDIncrement + ')">' + hideIcon + ' 隱藏</button>'
+        labelHTML += '<button class="btn btn-light hide" id="show-button-' + labelIDIncrement + '" onclick="showFree(' + labelIDIncrement + ')">' + showIcon + ' 顯示</button>'
+        labelHTML += '<button class="btn btn-danger" onclick="deleteFree(' + labelIDIncrement + ')">刪除</button>'
         labelHTML += '</div>'
         labelIDIncrement++
         labelDom.innerHTML += labelHTML
         document.getElementById("free-input").value = ""
         calculateFree()
-
     }
     function hideFree(id) {
         // add strike to label
